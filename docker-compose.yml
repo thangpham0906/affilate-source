@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Dịch vụ 1: Backend API
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: affiliate-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: affiliate_db
+      MYSQL_USER: affiliate_user
+      MYSQL_PASSWORD: affiliate_pass
+    ports:
+      - "3307:3306" # Dùng port 3307 để không conflict với MySQL host
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: affiliate-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8090:80" # Truy cập qua localhost:8090
+    depends_on:
+      - mysql
+
+  # Backend API
+  api:
+    build: 
+      context: . # Xây dựng từ thư mục gốc
+      dockerfile: ./backend/Dockerfile # Chỉ định Dockerfile
+    image: my-node-backend:latest # Đặt tên image
+    container_name: backend-api
+    restart: always
+    ports:
+      - "4000:4000" # Mở cổng 4000 ra máy host
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+
+  # Dịch vụ 2: Frontend Web
+  # web:
+  #   build: 
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+  #   image: affilate-source-nextjs-frontend:latest
+  #   container_name: frontend-web
+  #   restart: always
+  #   ports:
+  #     - "3000:3000" # Truy cập bằng localhost:3000
+  #   depends_on:
+  #     - api # Đảm bảo backend chạy trước
+  #   environment:
+  #     # Quan trọng: Kết nối Frontend với Backend qua tên service (api)
+  #     NEXT_PUBLIC_API_URL: http://api:4000
+
+# Volumes để lưu trữ data MySQL
+volumes:
+  mysql_data:

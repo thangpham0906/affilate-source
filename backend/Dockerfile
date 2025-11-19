@@ -9,6 +9,9 @@ RUN npm install
 # Copy toàn bộ mã nguồn
 COPY backend/. .
 
+# Create logs directory with proper permissions
+RUN mkdir -p logs && chown -R node:node logs
+
 # User không phải root
 USER node
 
