@@ -39,7 +39,7 @@ services:
       context: . # Xây dựng từ thư mục gốc
       dockerfile: ./backend/Dockerfile # Chỉ định Dockerfile
     image: my-node-backend:latest # Đặt tên image
-    container_name: backend-api
+    container_name: affiliate-backend-api
     restart: always
     ports:
       - "4000:4000" # Mở cổng 4000 ra máy host
@@ -54,7 +54,7 @@ services:
   #     context: .
   #     dockerfile: ./frontend/Dockerfile
   #   image: affilate-source-nextjs-frontend:latest
-  #   container_name: frontend-web
+  #   container_name: affiliate-frontend-web
   #   restart: always
   #   ports:
   #     - "3000:3000" # Truy cập bằng localhost:3000
